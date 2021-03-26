@@ -1,0 +1,23 @@
+require("dotenv").config();
+const express = require("express");
+const app = express();
+const cookieParser = require("cookie-parser");
+const setupRouting = require("./config/routing");
+const { initConnectionPool } = require("./config/connection-pool");
+const PORT = process.env.PORT || 3001;
+
+// Parse application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: false }));
+// Parse application/json
+app.use(express.json());
+app.use(cookieParser());
+
+setupRouting(app);
+
+try {
+  initConnectionPool();
+  app.listen(PORT, console.log(`Server running on port ${PORT}`));
+} catch (error) {
+  console.log(error);
+  process.exit(1);
+}
