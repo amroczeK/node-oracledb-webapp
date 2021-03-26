@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import "./Table.css"
+import "./Table.css";
 
 const Table = ({ data = {} }) => {
+  console.log(data);
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
 
@@ -12,7 +13,6 @@ const Table = ({ data = {} }) => {
   };
 
   const getRows = (rows) => {
-    console.log(rows);
     let arr = [];
     rows.forEach((row) => {
       let arr2 = Object.values(row);
@@ -23,8 +23,8 @@ const Table = ({ data = {} }) => {
 
   useEffect(() => {
     if (data?.length > 0) {
-      setColumns(getColumns(data[0].metaData));
-      setRows(getRows(data[0].rows));
+      setColumns(getColumns(data[0].result.metaData));
+      setRows(getRows(data[0].result.rows));
     }
   }, [data]);
 

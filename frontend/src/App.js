@@ -7,6 +7,7 @@ const App = () => {
   const [queryCount, setQueryCount] = useState([]);
   const [loading, setLoading] = useState(false);
   const [runQuery, setRunQuery] = useState(false);
+  const [singleResult, setSingleResult] = useState(null);
   const [results, setResults] = useState([]);
   const dropdown = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
@@ -27,7 +28,7 @@ const App = () => {
   const onQueryHandler = async (e) => {
     let arr = [];
     queryCount.forEach((i) => {
-      arr.push(document.getElementById(`sql-${i}`).value);
+      arr.push({ sql: document.getElementById(`sql-${i}`).value, id: `sql-${i}` });
     });
     setQueries(arr);
     setRunQuery(true);
@@ -36,14 +37,18 @@ const App = () => {
 
   const executeQueries = useCallback(async () => {
     if (runQuery) {
-      let sql = queries[0];
-      let body = { sql };
-      let response = await queryOracleDb({ body });
-      if (response) {
-        setLoading(!loading);
-        setRunQuery(!runQuery);
-        setResults([...results, response]);
-      }
+      let response;
+      console.log(queries);
+      queries.forEach(async ({ sql, id }) => {
+        setLoading(true);
+        let body = { sql };
+        response = await queryOracleDb({ body });
+        if (response) {
+          setLoading(!loading);
+          setRunQuery(!runQuery);
+          setSingleResult({ result: response, id });
+        }
+      });
     }
   }, [runQuery]);
 
@@ -56,6 +61,10 @@ const App = () => {
   useEffect(() => {
     executeQueries();
   }, [executeQueries]);
+
+  useEffect(() => {
+    if (singleResult) setResults([...results, singleResult]);
+  }, [singleResult]);
 
   return (
     <div className="container mt-5">
@@ -75,7 +84,7 @@ const App = () => {
           <div class="form-group mb-4">
             <label for="text-area">SQL Query</label>
             <textarea class="form-control" id={`sql-${i}`} rows="7"></textarea>
-            {results?.length > 0 && <Table data={results} />}
+            {queries?.map((query) => results?.length > 0 && query.id === `sql-${i}` && <Table id={`sql-${i}`} key={`sql-${i}`} data={results} />)}
           </div>
         ))}
       </div>
