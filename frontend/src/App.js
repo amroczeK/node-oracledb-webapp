@@ -9,17 +9,11 @@ const App = () => {
   const [runQuery, setRunQuery] = useState(false);
   const [results, setResults] = useState([]);
   const dropdown = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  const data = {
-    columns: ["test1", "test2", "test3"],
-    rows: [
-      ["1", "2", "3"],
-      ["3", "4", "5"],
-    ],
-  };
 
   const onChangeHandler = (e) => {
     let selected = e.target.value;
     let arr = [];
+
     if (!isNaN(selected)) {
       for (let count = 0; count < selected; count++) {
         arr.push(count);
@@ -42,19 +36,22 @@ const App = () => {
 
   const executeQueries = useCallback(async () => {
     if (runQuery) {
-      console.log(queries);
       let sql = queries[0];
       let body = { sql };
       let response = await queryOracleDb({ body });
-      console.log(response);
       if (response) {
         setLoading(!loading);
         setRunQuery(!runQuery);
+        setResults([...results, response]);
       }
-      setResults([...results, response]);
-      console.log(results);
     }
   }, [runQuery]);
+
+  useEffect(() => {
+    if (results?.length > 0) {
+      setResults([]);
+    }
+  }, [queryCount]);
 
   useEffect(() => {
     executeQueries();
@@ -78,7 +75,7 @@ const App = () => {
           <div class="form-group mb-4">
             <label for="text-area">SQL Query</label>
             <textarea class="form-control" id={`sql-${i}`} rows="7"></textarea>
-            <Table data={data} />
+            {results?.length > 0 && <Table data={results} />}
           </div>
         ))}
       </div>
