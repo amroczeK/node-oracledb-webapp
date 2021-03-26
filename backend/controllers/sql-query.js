@@ -5,6 +5,8 @@ const isEmpty = require("lodash.isempty");
 // @route   POST /api/query
 // @access  Public
 const query = async (req, res) => {
+  console.log(req.body);
+  return res.status(200).send({ msg: "OK" });
   const { sql, queryBinds } = req.body;
 
   let options = {

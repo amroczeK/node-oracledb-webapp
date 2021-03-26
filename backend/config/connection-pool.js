@@ -45,4 +45,6 @@ const closePoolAndExit = async () => {
   }
 };
 
+process.once("SIGTERM", closePoolAndExit).once("SIGINT", closePoolAndExit).once("SIGUSR2", closePoolAndExit).once("restart", closePoolAndExit);
+
 module.exports = { initConnectionPool, closePoolAndExit };
