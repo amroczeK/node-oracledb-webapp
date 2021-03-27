@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { queryOracleDb } from "./api";
 import Table from "./components/Table";
 
 const App = () => {
-  const [queries, setQueries] = useState([]);
   const [queryCount, setQueryCount] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [runQuery, setRunQuery] = useState(false);
-  const [singleResult, setSingleResult] = useState(null);
   const [results, setResults] = useState([]);
   const dropdown = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
@@ -25,72 +22,65 @@ const App = () => {
     }
   };
 
-  const onQueryHandler = async (e) => {
+  const executeQueries = () => {
     let arr = [];
     queryCount.forEach((i) => {
       arr.push({ sql: document.getElementById(`sql-${i}`).value, id: `sql-${i}` });
     });
-    setQueries(arr);
-    setRunQuery(true);
     setLoading(true);
+    let promises = [];
+    arr.forEach(({ sql, id }) => {
+      let body = { sql };
+      promises.push(queryOracleDb({ body, id }));
+    });
+    Promise.all(promises)
+      .then((responses) => {
+        let results = [];
+        responses.forEach((response) => {
+          results.push(response);
+        });
+        setResults(results);
+        setLoading(!loading);
+      })
+      .catch((error) => console.log(error));
   };
 
-  const executeQueries = useCallback(async () => {
-    if (runQuery) {
-      let response;
-      console.log(queries);
-      queries.forEach(async ({ sql, id }) => {
-        setLoading(true);
-        let body = { sql };
-        response = await queryOracleDb({ body });
-        if (response) {
-          setLoading(!loading);
-          setRunQuery(!runQuery);
-          setSingleResult({ result: response, id });
-        }
-      });
-    }
-  }, [runQuery]);
-
-  useEffect(() => {
+  const resetResults = () => {
     if (results?.length > 0) {
       setResults([]);
     }
-  }, [queryCount]);
-
-  useEffect(() => {
-    executeQueries();
-  }, [executeQueries]);
-
-  useEffect(() => {
-    if (singleResult) setResults([...results, singleResult]);
-  }, [singleResult]);
+  };
 
   return (
     <div className="container mt-5">
-      <div class="input-group mb-3">
-        <label class="input-group-text" for="inputGroupSelect01">
+      <div className="input-group mb-3">
+        <label className="input-group-text" for="inputGroupSelect01">
           Number of queries
         </label>
-        <select onChange={onChangeHandler} class="form-select" id="inputGroupSelect01">
+        <select onChange={onChangeHandler} className="form-select" id="inputGroupSelect01">
           <option selected>Choose...</option>
           {dropdown?.map((i) => (
             <option value={i}>{i}</option>
           ))}
         </select>
       </div>
-      <div class="mb-3">
+      <div className="mb-3">
         {queryCount?.map((i) => (
-          <div class="form-group mb-4">
+          <div className="form-group mb-4">
             <label for="text-area">SQL Query</label>
-            <textarea class="form-control" id={`sql-${i}`} rows="7"></textarea>
-            {queries?.map((query) => results?.length > 0 && query.id === `sql-${i}` && <Table id={`sql-${i}`} key={`sql-${i}`} data={results} />)}
+            <textarea className="form-control" id={`sql-${i}`} rows="7"></textarea>
+            {results.length > 0 && results[i]?.id === `sql-${i}` && <Table key={`sql-${i}`} data={results[i]} />}
           </div>
         ))}
       </div>
-      <button type="button" class="btn btn-primary" onClick={onQueryHandler}>
-        Query
-      </button>
+      <div className="d-flex flex-row">
+        <button type="button" className="btn btn-primary" onClick={() => executeQueries()}>
+          Query
+        </button>
+        <button type="button" className="btn btn-primary" onClick={resetResults}>
+          Clear Results
+        </button>
+      </div>
     </div>
   );
 };

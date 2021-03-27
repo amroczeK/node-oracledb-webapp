@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./Table.css";
 
 const Table = ({ data = {} }) => {
-  console.log(data);
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
 
@@ -22,15 +21,16 @@ const Table = ({ data = {} }) => {
   };
 
   useEffect(() => {
-    if (data?.length > 0) {
-      setColumns(getColumns(data[0].result.metaData));
-      setRows(getRows(data[0].result.rows));
+    console.log(data);
+    if (data) {
+      setColumns(getColumns(data.metaData));
+      setRows(getRows(data.rows));
     }
   }, [data]);
 
   return (
-    <div class="table-wrapper-scroll-y my-custom-scrollbar">
-      <table class="table">
+    <div className="table-wrapper-scroll-y my-custom-scrollbar">
+      <table className="table">
         <thead>
           <tr>
             <th scope="col">#</th>
