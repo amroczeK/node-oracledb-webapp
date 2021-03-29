@@ -6,9 +6,6 @@ const isEmpty = require("lodash.isempty");
 // @access  Public
 const query = async (req, res) => {
   const { sql, queryBinds } = req.body;
-  // console.log(sql);
-  // return res.status(200).send({ msg: "OK" });
-  // //const { sql, queryBinds } = req.body;
 
   let options = {
     outFormat: oracledb.OUT_FORMAT_OBJECT,
