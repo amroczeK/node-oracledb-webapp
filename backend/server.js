@@ -13,11 +13,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 setupRouting(app);
+initConnectionPool()
+  .then(() => app.listen(PORT, console.log(`Server running on port ${PORT}`)))
+  .catch((error) => {
+    console.log(error);
+    process.exit(1);
+  });
 
-try {
-  initConnectionPool();
-  app.listen(PORT, console.log(`Server running on port ${PORT}`));
-} catch (error) {
-  console.log(error);
-  process.exit(1);
-}
+//app.listen(PORT, console.log(`Server running on port ${PORT}`));

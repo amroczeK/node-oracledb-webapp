@@ -18,8 +18,8 @@ const initConnectionPool = async () => {
       connectString: process.env.DB_CONN_STRING,
       poolAlias: process.env.POOL_ALIAS, // set an alias to allow access to the pool via a name.
       poolIncrement: 0, // only grow the pool by one connection at a time
-      poolMin: 8, // start with no connections; let the pool shrink completely
-      poolMax: 8, // maximum size of the pool. Increase UV_THREADPOOL_SIZE if you increase poolMax
+      poolMin: 4, // start with no connections; let the pool shrink completely
+      poolMax: 4, // maximum size of the pool. Increase UV_THREADPOOL_SIZE if you increase poolMax
       poolPingInterval: 60, // check aliveness of connection if idle in the pool for 60 seconds
       poolTimeout: 60, // The number of seconds after which idle connections (unused in the pool) are terminated
       queueMax: 500, // don't allow more than 500 unsatisfied getConnection() calls in the pool queue
