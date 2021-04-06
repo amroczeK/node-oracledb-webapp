@@ -20,13 +20,13 @@ const Binds = ({ title, index }) => {
       {queryBinds?.map((i) => (
         <div key={i} class="input-group mt-3 mb-3">
           <span className="input-group-text">Bind</span>
-          <input id={`bind-${i}`} type="text" className="form-control" placeholder="id" aria-label="Bind" />
+          <input id={`bind-${index}`} type="text" className="form-control" placeholder="id" aria-label="Bind" />
           <span className="input-group-text">Value</span>
-          <input id={`bind-value-${i}`} type="text" className="form-control" placeholder="1234" aria-label="Value" />
+          <input id={`bind-value-${index}`} type="text" className="form-control" placeholder="1234" aria-label="Value" />
           <label className="input-group-text" for="inputGroupSelect01">
             Type
           </label>
-          <select id={`bind-type-${i}`} className="form-select">
+          <select id={`bind-type-${index}`} className="form-select">
             <option selected>Choose...</option>
             <option value="STRING">String</option>
             <option value="NUMBER">Number</option>

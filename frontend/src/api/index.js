@@ -8,8 +8,8 @@ export const queryOracleDb = async ({ sql, id, index, binds }) => {
     data["index"] = index;
     return data;
   } catch (error) {
-    console.log(error.toString());
-    return {};
+    console.log(error);
+    return error;
   }
 };
 
@@ -24,8 +24,8 @@ export const fetchData = ({ queries, concurrency }) => {
       concurrency ? concurrency : 1
     );
 
-    queries.forEach(({ sql, id, index, binds }) =>
-      q.push({ sql, id, index, binds }, (err) => {
+    queries.forEach(({ sql, id, index, queryBinds }) =>
+      q.push({ sql, id, index, binds: queryBinds[index] }, (err) => {
         if (err) console.log(err);
         console.log(`finished processing ${id}`);
       })

@@ -6,6 +6,7 @@ import Button from "./components/Button";
 import Query from "./components/Query";
 
 const App = () => {
+  const [error, setError] = useState(null);
   const [queryCount, setQueryCount] = useState([]);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState({});
@@ -35,26 +36,28 @@ const App = () => {
 
   const executeQueries = () => {
     let arr = [];
+    let queryBinds = [];
     queryCount.forEach((i) => {
       let bindCountEle = document.getElementById(`bind-count-${i}`);
       let bindCount = bindCountEle.options[bindCountEle.selectedIndex].value;
 
       let binds = {};
       for (let count = 0; count < bindCount; count++) {
-        let bind = document.getElementById(`bind-${count}`).value;
-        let val = document.getElementById(`bind-value-${count}`).value;
-        let typeEle = document.getElementById(`bind-type-${count}`);
+        let bind = document.getElementById(`bind-${i}`).value;
+        let val = document.getElementById(`bind-value-${i}`).value;
+        let typeEle = document.getElementById(`bind-type-${i}`);
         let type = typeEle.options[typeEle.selectedIndex].value;
         binds[bind] = {
           val,
           type,
         };
+        queryBinds.push(binds);
       }
 
       // Binds example: { NAME: { val: 'Adrian', type: STRING }, ID: { val: '1234', type: NUMBER } }
       let query = document.getElementById(`sql-${i}`).value;
       if (query) {
-        arr.push({ sql: query, id: `sql-${i}`, index: i, binds });
+        arr.push({ sql: query, id: `sql-${i}`, index: i, queryBinds });
       }
     });
     setLoading(true);
@@ -63,7 +66,6 @@ const App = () => {
         setResults(response);
         setLoading(!loading);
       })
-      .catch((error) => console.log(error));
   };
 
   const resetResults = () => {
@@ -74,6 +76,11 @@ const App = () => {
 
   return (
     <div className="container mt-5">
+      {error && (
+        <div class="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
       <div className="d-flex flex-row">
         <SelectDropdown title={"Number of Queries"} onChange={queryCountHandler} options={queriesDropdown} />
       </div>

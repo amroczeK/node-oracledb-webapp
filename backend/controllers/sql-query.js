@@ -80,7 +80,7 @@ const query = async (req, res) => {
     res.json(data);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ msg: error.toString() });
+    res.status(500).json({ msg: error.toString() });
   } finally {
     if (connection) {
       try {

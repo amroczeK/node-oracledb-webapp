@@ -21,14 +21,14 @@ const Table = ({ data = {} }) => {
   };
 
   useEffect(() => {
-    if (data) {
+    if (data && data?.metaData && data?.rows) {
       setColumns(getColumns(data.metaData));
       setRows(getRows(data.rows));
     }
   }, [data]);
 
   return (
-    <div className="table-wrapper-scroll-y my-custom-scrollbar">
+    <div className="table-wrapper-scroll-y my-custom-scrollbar mt-2">
       <table className="table">
         <thead>
           <tr>
