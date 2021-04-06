@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import { fetchData } from "./api";
 import SelectDropdown from "./components/SelectDropdown";
 import Checkbox from "./components/Checkbox";
-import Table from "./components/Table";
+import Button from "./components/Button";
+import Query from "./components/Query";
 
 const App = () => {
   const [queryCount, setQueryCount] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState({});
   const [checked, setChecked] = useState(false);
   const [concurrency, setConcurrency] = useState(null);
   const queriesDropdown = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  const concurrencyLimit = [1, 2, 3, 4];
+  const concurrencyDropdown = [1, 2, 3, 4];
 
   const queryCountHandler = (e) => {
     let selected = e.target.value;
@@ -35,38 +36,38 @@ const App = () => {
   const executeQueries = () => {
     let arr = [];
     queryCount.forEach((i) => {
+      let bindCountEle = document.getElementById(`bind-count-${i}`);
+      let bindCount = bindCountEle.options[bindCountEle.selectedIndex].value;
+
+      let binds = {};
+      for (let count = 0; count < bindCount; count++) {
+        let bind = document.getElementById(`bind-${count}`).value;
+        let val = document.getElementById(`bind-value-${count}`).value;
+        let typeEle = document.getElementById(`bind-type-${count}`);
+        let type = typeEle.options[typeEle.selectedIndex].value;
+        binds[bind] = {
+          val,
+          type,
+        };
+      }
+
+      // Binds example: { NAME: { val: 'Adrian', type: STRING }, ID: { val: '1234', type: NUMBER } }
       let query = document.getElementById(`sql-${i}`).value;
       if (query) {
-        arr.push({ sql: query, id: `sql-${i}` });
+        arr.push({ sql: query, id: `sql-${i}`, index: i, binds });
       }
     });
     setLoading(true);
     fetchData({ queries: arr, concurrency })
       .then((response) => {
-        console.log(response);
         setResults(response);
         setLoading(!loading);
       })
       .catch((error) => console.log(error));
-    // let promises = [];
-    // arr.forEach(({ sql, id }) => {
-    //   let body = { sql };
-    //   promises.push(queryOracleDb({ body, id }));
-    // });
-    // Promise.all(promises)
-    //   .then((responses) => {
-    //     let results = [];
-    //     responses.forEach((response) => {
-    //       results.push(response);
-    //     });
-    //     setResults(results);
-    //     setLoading(!loading);
-    //   })
-    //   .catch((error) => console.log(error));
   };
 
   const resetResults = () => {
-    if (results?.length > 0) {
+    if (Object.keys(results).length > 0) {
       setResults([]);
     }
   };
@@ -77,54 +78,23 @@ const App = () => {
         <SelectDropdown title={"Number of Queries"} onChange={queryCountHandler} options={queriesDropdown} />
       </div>
       <Checkbox title={"Concurrent Queries"} onChange={concurrentCheckedHandler} />
-      {/* <div className="form-check mt-3">
-        <input onChange={onCheckedHandler} type="checkbox" className="form-check-input" id="exampleCheck1" />
-        <label className="form-check-label" for="exampleCheck1">
-          Concurrent Queries
-        </label>
-      </div> */}
       {checked && (
         <SelectDropdown
           title={"Concurrency Limit"}
           onChange={(e) => {
             setConcurrency(e.target.value);
           }}
-          options={concurrencyLimit}
+          options={concurrencyDropdown}
         />
-        // <div className="input-group w-25 mt-3">
-        //   <label className="input-group-text" for="inputGroupSelect01">
-        //     Concurrency Limit
-        //   </label>
-        //   <select
-        //     onChange={(e) => {
-        //       setConcurrency(e.target.value);
-        //     }}
-        //     className="form-select"
-        //     id="inputGroupSelect01"
-        //   >
-        //     <option selected>Choose...</option>
-        //     {concurrencyLimit?.map((i) => (
-        //       <option value={i}>{i}</option>
-        //     ))}
-        //   </select>
-        // </div>
       )}
       <div className="mb-3 mt-3">
         {queryCount?.map((i) => (
-          <div className="form-group mb-4">
-            <label for="text-area">SQL Query</label>
-            <textarea className="form-control" id={`sql-${i}`} rows="7"></textarea>
-            {results.length > 0 && <Table key={`sql-${i}`} data={results[i]} />}
-          </div>
+          <Query key={i} index={i} title={`SQL Query #${i + 1}`} results={results} />
         ))}
       </div>
       <div className="d-flex flex-row">
-        <button type="button" className="btn btn-primary" onClick={() => executeQueries()}>
-          Query
-        </button>
-        <button type="button" className="btn btn-primary" onClick={resetResults}>
-          Clear Results
-        </button>
+        <Button title={"Query"} onClick={() => executeQueries()} />
+        <Button title={"Clear Results"} onClick={() => resetResults()} />
       </div>
     </div>
   );

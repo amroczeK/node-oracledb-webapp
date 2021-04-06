@@ -5,7 +5,7 @@ const isEmpty = require("lodash.isempty");
 // @route   POST /api/query
 // @access  Public
 const query = async (req, res) => {
-  const { sql, queryBinds } = req.body;
+  let { sql, binds } = req.body;
 
   let options = {
     outFormat: oracledb.OUT_FORMAT_OBJECT,
@@ -18,24 +18,19 @@ const query = async (req, res) => {
     resultSet: true,
   };
 
-  let binds = {};
-
-  if (!isEmpty(queryBinds)) {
-    Object.keys(queryBinds).map((bind) => {
+  // Binds output example: { NAME: { val: 'Adrian', type: STRING }, ID: { val: '1234', type: NUMBER } }
+  if (!isEmpty(binds)) {
+    Object.keys(binds).map((bind) => {
       // More types: http://oracle.github.io/node-oracledb/doc/api.html#-42624-type
-      if (bind.type === "String") {
-        binds[bind] = {
-          val: queryBinds.value,
-          type: oracledb.STRING,
-        };
+      if (binds[bind].type === "STRING") {
+        binds[bind].type = oracledb.STRING;
       }
-      if (bind.type === "Number") {
-        binds[bind] = {
-          val: queryBinds.value,
-          type: oracledb.NUMBER,
-        };
+      if (binds[bind].type === "NUMBER") {
+        binds[bind].type = oracledb.NUMBER;
       }
     });
+  } else {
+    binds = {};
   }
 
   let connection;

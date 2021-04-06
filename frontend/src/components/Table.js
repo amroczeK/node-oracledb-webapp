@@ -21,7 +21,6 @@ const Table = ({ data = {} }) => {
   };
 
   useEffect(() => {
-    console.log(data);
     if (data) {
       setColumns(getColumns(data.metaData));
       setRows(getRows(data.rows));

@@ -1,10 +1,11 @@
 import axios from "axios";
 import { queue } from "async-es";
 
-export const queryOracleDb = async ({ sql, id }) => {
+export const queryOracleDb = async ({ sql, id, index, binds }) => {
   try {
-    const { data } = await axios.post(`/api/query`, { sql });
+    const { data } = await axios.post(`/api/query`, { sql, binds });
     data["id"] = id;
+    data["index"] = index;
     return data;
   } catch (error) {
     console.log(error.toString());
@@ -14,20 +15,19 @@ export const queryOracleDb = async ({ sql, id }) => {
 
 export const fetchData = ({ queries, concurrency }) => {
   return new Promise(async (resolve, reject) => {
-    let results = [];
+    let results = {};
     const q = queue(
-      async ({ sql, id }) => {
-        let response = await queryOracleDb({ sql, id });
-        console.log("resp[onse", response);
-        results.push(response);
+      async ({ sql, id, index, binds }) => {
+        let response = await queryOracleDb({ sql, id, index, binds });
+        results[index] = response;
       },
       concurrency ? concurrency : 1
     );
 
-    queries.forEach(({ sql, id }) =>
-      q.push({ sql, id }, (err) => {
+    queries.forEach(({ sql, id, index, binds }) =>
+      q.push({ sql, id, index, binds }, (err) => {
         if (err) console.log(err);
-        console.log("finished processing item");
+        console.log(`finished processing ${id}`);
       })
     );
 
