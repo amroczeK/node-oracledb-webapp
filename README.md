@@ -67,3 +67,7 @@ Run the following to run just the backend with nodemon during development
 ```
 npm run server
 ```
+
+## Preview
+NOTE: Queries and results have been obfuscated.
+![Alt text](./preview.PNG?raw=true 'Preview')
