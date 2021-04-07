@@ -9,3 +9,5 @@ Application features:
 - Bind up to 5 variables
 - Run queries with and without binds
 - Results table
+
+## Pre-requisites
