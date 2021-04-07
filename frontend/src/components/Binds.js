@@ -23,7 +23,7 @@ const Binds = ({ title, index }) => {
           <input id={`bind-${index}`} type="text" className="form-control" placeholder="id" aria-label="Bind" />
           <span className="input-group-text">Value</span>
           <input id={`bind-value-${index}`} type="text" className="form-control" placeholder="1234" aria-label="Value" />
-          <label className="input-group-text" for="inputGroupSelect01">
+          <label className="input-group-text" htmlFor="inputGroupSelect01">
             Type
           </label>
           <select id={`bind-type-${index}`} className="form-select">

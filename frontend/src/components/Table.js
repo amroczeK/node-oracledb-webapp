@@ -32,14 +32,14 @@ const Table = ({ data = {} }) => {
         <thead>
           <tr>
             <th scope="col">#</th>
-            {columns?.map((column) => (
-              <th scope="col">{column}</th>
+            {columns?.map((column, idx) => (
+              <th key={idx} scope="col">{column}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {rows?.map((row, idx) => (
-            <tr>
+            <tr key={idx}>
               <th scope="row">{idx}</th>
               <td>{row}</td>
             </tr>
