@@ -6,7 +6,6 @@ import Button from "./components/Button";
 import Query from "./components/Query";
 
 const App = () => {
-  const [error, setError] = useState(null);
   const [queryCount, setQueryCount] = useState([]);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState({});
@@ -19,6 +18,7 @@ const App = () => {
     let selected = e.target.value;
     let arr = [];
 
+    resetResults();
     if (!isNaN(selected)) {
       for (let count = 0; count < selected; count++) {
         arr.push(count);
@@ -61,13 +61,13 @@ const App = () => {
       }
     });
     setLoading(true);
-    fetchData({ queries: arr, concurrency })
-      .then((response) => {
-        setResults(response);
-        setLoading(!loading);
-      })
+    fetchData({ queries: arr, concurrency }).then((response) => {
+      setResults(response);
+      setLoading(!loading);
+    });
   };
 
+  // Remove previous results if there are any
   const resetResults = () => {
     if (Object.keys(results).length > 0) {
       setResults([]);
@@ -76,14 +76,7 @@ const App = () => {
 
   return (
     <div className="container mt-5">
-      {error && (
-        <div class="alert alert-danger" role="alert">
-          {error}
-        </div>
-      )}
-      <div className="d-flex flex-row">
-        <SelectDropdown title={"Number of Queries"} onChange={queryCountHandler} options={queriesDropdown} />
-      </div>
+      <SelectDropdown title={"Number of Queries"} onChange={queryCountHandler} options={queriesDropdown} />
       <Checkbox title={"Concurrent Queries"} onChange={concurrentCheckedHandler} />
       {checked && (
         <SelectDropdown
@@ -99,7 +92,7 @@ const App = () => {
           <Query key={i} index={i} title={`SQL Query #${i + 1}`} results={results} />
         ))}
       </div>
-      <div className="d-flex flex-row">
+      <div className="d-flex flex-row mb-5">
         <Button title={"Query"} onClick={() => executeQueries()} />
         <Button title={"Clear Results"} onClick={() => resetResults()} />
       </div>

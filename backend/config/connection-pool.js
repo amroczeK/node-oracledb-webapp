@@ -1,4 +1,3 @@
-const dotenv = require("dotenv").config();
 const oracledb = require("oracledb");
 
 try {
@@ -40,6 +39,7 @@ const closePoolAndExit = async () => {
     // Database are 19c (or later).
     await oracledb.getPool(process.env.POOL_ALIAS).close(5);
     console.log("Connection pool closed");
+    process.exit(0);
   } catch (err) {
     console.error("Error occured closing pools:", err.message);
   }
