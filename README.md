@@ -70,4 +70,4 @@ npm run server
 
 ## Preview
 NOTE: Queries and results have been obfuscated.
-![Alt text](./preview.PNG?raw=true 'Preview')
+![Alt text](./preview.png?raw=true 'Preview')
