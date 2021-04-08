@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
 const setupRouting = require("./config/routing");
-const { initConnectionPool } = require("./config/connection-pool");
+const { initOracleClient, initConnectionPool } = require("./config/connection-pool");
 const PORT = process.env.PORT || 3001;
 
 // Parse application/x-www-form-urlencoded
@@ -12,6 +12,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 
+initOracleClient();
 setupRouting(app);
 initConnectionPool()
   .then(() => app.listen(PORT, console.log(`Server running on port ${PORT}`)))
@@ -19,5 +20,3 @@ initConnectionPool()
     console.log(error);
     process.exit(1);
   });
-
-//app.listen(PORT, console.log(`Server running on port ${PORT}`));

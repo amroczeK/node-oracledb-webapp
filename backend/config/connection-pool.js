@@ -1,17 +1,19 @@
 const oracledb = require("oracledb");
 
-try {
-  oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_LOC });
-} catch (err) {
-  console.error("Error initializing oracle client:", err);
-  process.exit(1);
-}
+const initOracleClient = () => {
+  try {
+    oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_LOC });
+  } catch (err) {
+    console.error("Error initializing oracle client:", err);
+    process.exit(1);
+  }
+};
 
 const initConnectionPool = async () => {
   try {
     console.log(`Initializing connection pool to ${process.env.POOL_ALIAS}`);
     await oracledb.createPool({
-      //_enableStats: true, // Default is false, enalbed console.log(pool._logStats())
+      //_enableStats: true, // Default is false, enables console.log(pool._logStats())
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       connectString: process.env.DB_CONN_STRING,
@@ -33,7 +35,7 @@ const closePoolAndExit = async () => {
   console.log("\nClosing connection");
   try {
     // Get the pool from the pool cache and close it when no
-    // connections are in use, or force it closed after 10 seconds.
+    // connections are in use, or force it closed after 5 seconds.
     // If this hangs, you may need DISABLE_OOB=ON in a sqlnet.ora file.
     // This setting should not be needed if both Oracle Client and Oracle
     // Database are 19c (or later).
@@ -47,4 +49,4 @@ const closePoolAndExit = async () => {
 
 process.once("SIGTERM", closePoolAndExit).once("SIGINT", closePoolAndExit).once("SIGUSR2", closePoolAndExit).once("restart", closePoolAndExit);
 
-module.exports = { initConnectionPool, closePoolAndExit };
+module.exports = { initOracleClient, initConnectionPool, closePoolAndExit };
