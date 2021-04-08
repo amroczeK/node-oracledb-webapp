@@ -26,6 +26,7 @@ const query = async (req, res) => {
         binds[bind].type = oracledb.STRING;
       }
       if (binds[bind].type === "NUMBER") {
+        binds[bind].val = parseInt(bind.val);
         binds[bind].type = oracledb.NUMBER;
       }
     });
