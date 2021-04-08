@@ -44,7 +44,7 @@ const query = async (req, res) => {
     connection = await oracledb.getConnection(process.env.POOL_ALIAS);
 
     //pool._logStats(); // To help debug the connection pool
-    const stream = await connection.queryStream(sql, binds, options);
+    const stream = connection.queryStream(sql, binds, options);
 
     const consumeStream = new Promise((resolve, reject) => {
       let data = {};

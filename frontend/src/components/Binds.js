@@ -16,9 +16,9 @@ const Binds = ({ title, index }) => {
 
   return (
     <>
-      <SelectDropdown id={`bind-count-${index}`} title={title} onChange={queryBindsHandler} options={bindsDropdown} />
+      <SelectDropdown id={`bind-count-${index}`} title={title} onChange={queryBindsHandler} options={bindsDropdown} defaultValue={"No Binds"} />
       {queryBinds?.map((i) => (
-        <div key={i} class="input-group mt-3 mb-3">
+        <div key={i} className="input-group mt-3 mb-3">
           <span className="input-group-text">Bind</span>
           <input id={`bind-${index}`} type="text" className="form-control" placeholder="id" aria-label="Bind" />
           <span className="input-group-text">Value</span>
@@ -27,7 +27,7 @@ const Binds = ({ title, index }) => {
             Type
           </label>
           <select id={`bind-type-${index}`} className="form-select">
-            <option selected>Choose...</option>
+            <option defaultValue={"Choose..."}>Choose...</option>
             <option value="STRING">String</option>
             <option value="NUMBER">Number</option>
           </select>
